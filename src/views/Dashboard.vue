@@ -1,7 +1,5 @@
 <template>
-  <div class="page">
-    <p class="text">
-      ログインに成功！
-    </p>
+  <div class="login">
+    <h2>ユーザ一覧</h2>
   </div>
 </template>

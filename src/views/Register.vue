@@ -53,7 +53,6 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(() => {
-          // alert('アカウント登録完了しました ', user.email);
           this.update(this.username);
         })
         .catch((error) => {
@@ -67,7 +66,6 @@ export default {
           displayName: username,
         })
         .then(() => {
-          console.log('Update successful');
           this.$router.push('/');
         })
         .catch((error) => {
@@ -77,8 +75,6 @@ export default {
   },
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h1,
 h2 {

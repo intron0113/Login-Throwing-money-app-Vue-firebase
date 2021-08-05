@@ -1,6 +1,6 @@
 <template>
-  <div class="register">
-    <h2>新規登録画面</h2>
+  <div class="login">
+    <h2>ログイン画面</h2>
     <form class="form" @submit.prevent>
       <label class="label">
         <span class="label">
@@ -17,61 +17,33 @@
       </label>
       <br />
       <br />
-      <button class="btn btn-border" type="submit" @click="register">
+      <button class="btn btn-border" type="submit" @click="login">
         ログイン
       </button>
     </form>
     <p>
-      <router-link to="/register" class="router-link"
+      <router-link to="/login" class="router-link"
         >新規登録はこちらから</router-link
       >
     </p>
   </div>
 </template>
 <script>
-import firebase from 'firebase';
+// import firebase from 'firebase';
 
 export default {
-  name: 'register',
+  name: 'login',
   data() {
     return {
-      username: '',
       email: '',
       password: '',
     };
   },
   methods: {
-    register: function() {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          // alert('アカウント登録完了しました ', user.email);
-          this.update(this.username);
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
-    },
-    update(username) {
-      firebase
-        .auth()
-        .currentUser.updateProfile({
-          displayName: username,
-        })
-        .then(() => {
-          console.log('Update successful');
-          this.$router.push('/');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+    login: function() {},
   },
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h1,
 h2 {
@@ -88,7 +60,7 @@ li {
 a {
   color: #42b983;
 }
-.register {
+.login {
   margin-top: 20px;
 
   display: flex;
