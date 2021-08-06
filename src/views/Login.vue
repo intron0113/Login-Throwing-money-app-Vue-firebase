@@ -1,23 +1,23 @@
 <template>
   <div class="login">
     <h2>ログイン画面</h2>
-    <form class="form" @submit.prevent>
+    <form class="form">
       <label class="label">
         <span class="label">
           メールアドレス
         </span>
-        <input class="input" type="text" v-model="email" />
+        <input class="input" type="text" />
       </label>
       <br />
       <label class="label">
         <span class="label">
           パスワード
         </span>
-        <input class="input" type="password" v-model="password" />
+        <input class="input" type="password" />
       </label>
       <br />
       <br />
-      <button class="btn btn-border" type="submit" @click="login">
+      <button class="btn btn-border" type="submit">
         ログイン
       </button>
     </form>
@@ -28,35 +28,6 @@
     </p>
   </div>
 </template>
-<script>
-import firebase from 'firebase';
-
-export default {
-  name: 'login',
-  data() {
-    return {
-      email: '',
-      password: '',
-    };
-  },
-  methods: {
-    login: function() {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then(
-          () => {
-            alert('Success!');
-            this.$router.push('/');
-          },
-          (err) => {
-            alert(err.message);
-          }
-        );
-    },
-  },
-};
-</script>
 <style scoped>
 h1,
 h2 {

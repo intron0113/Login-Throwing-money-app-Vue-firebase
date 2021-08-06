@@ -36,8 +36,6 @@
   </div>
 </template>
 <script>
-// import firebase from s'firebase';
-
 export default {
   name: 'register',
   data() {
@@ -48,59 +46,13 @@ export default {
     };
   },
   methods: {
-    // async register() {
-    // try {
-    //   await firebase
-    //     .auth()
-    //     .createUserWithEmailAndPassword(this.email, this.password);
-    //   const user = firebase.auth().currentUser;
-    //   await user.updateProfile({
-    //     displayName: this.username,
-    //   });
-    //ユーザー名をFirebaseへ格納した後、非同期処理でstoreへ渡し、ログイン後画面へ遷移する
-    //   this.$store.dispatch('updataUser', user);
-    //   this.$router.push('/');
-    // } catch (e) {
-    //   alert(e.message);
-    // }
-    // },
     register: function() {
       this.$store.dispatch('register', {
         email: this.email,
         password: this.password,
         name: this.username,
       });
-
-      // firebase
-      //   .auth()
-      //   .createUserWithEmailAndPassword(this.email, this.password)
-      //   .then((result) => {
-      //     result.user.updateProfile({
-      //       displayName: this.username,
-      //     });
-
-      //     setTimeout(() => {
-      //       this.$store.dispatch('updataUser', result.user);
-      //       this.$router.push('/');
-      //     }, 1000);
-      //   })
-      //   .catch((error) => {
-      //     alert(error.message);
-      //   });
     },
-    // update(username) {
-    //   firebase
-    //     .auth()
-    //     .currentUser.updateProfile({
-    //       displayName: username,
-    //     })
-    //     .then(() => {
-    //       this.$router.push('/');
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // },
   },
 };
 </script>
