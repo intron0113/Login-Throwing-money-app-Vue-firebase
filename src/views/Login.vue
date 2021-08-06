@@ -22,14 +22,14 @@
       </button>
     </form>
     <p>
-      <router-link to="/login" class="router-link"
+      <router-link to="/register" class="router-link"
         >新規登録はこちらから</router-link
       >
     </p>
   </div>
 </template>
 <script>
-// import firebase from 'firebase';
+import firebase from 'firebase';
 
 export default {
   name: 'login',
@@ -40,7 +40,20 @@ export default {
     };
   },
   methods: {
-    login: function() {},
+    login: function() {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then(
+          () => {
+            alert('Success!');
+            this.$router.push('/');
+          },
+          (err) => {
+            alert(err.message);
+          }
+        );
+    },
   },
 };
 </script>
