@@ -42,6 +42,27 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    login({ dispatch }, payload) {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(payload.email, payload.password)
+        .then(() => {
+          dispatch('checkLogin');
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    },
+    checkLogin({ commit }) {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          commit('getData', {
+            name: user.displayName,
+          });
+        }
+        router.push('/');
+      });
+    },
   },
 
   mutations: {
