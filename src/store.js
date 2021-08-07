@@ -9,7 +9,11 @@ import firebase from 'firebase';
 export default new Vuex.Store({
   state() {
     return {
-      user: '',
+      user: {
+        uid: '',
+        email: '',
+        name: '',
+      },
     };
   },
   getters: {
@@ -28,14 +32,14 @@ export default new Vuex.Store({
           console.log({ code: error.code, message: error.message });
         });
     },
-    update({ commit }, name) {
+    update({ dispatch }, name) {
       firebase
         .auth()
         .currentUser.updateProfile({
           displayName: name,
         })
         .then(() => {
-          commit('getData', name);
+          dispatch('checkLogin');
           router.push('/');
         })
         .catch((error) => {
@@ -48,6 +52,7 @@ export default new Vuex.Store({
         .signInWithEmailAndPassword(payload.email, payload.password)
         .then(() => {
           dispatch('checkLogin');
+          router.push('/');
         })
         .catch((error) => {
           alert(error);
@@ -57,17 +62,18 @@ export default new Vuex.Store({
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
           commit('getData', {
+            uid: user.uid,
+            email: user.email,
             name: user.displayName,
           });
         }
-        router.push('/');
       });
     },
   },
 
   mutations: {
-    getData(state, name) {
-      state.user = name;
+    getData(state, user) {
+      state.user = user;
     },
   },
 });
