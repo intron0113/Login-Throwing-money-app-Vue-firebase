@@ -46,7 +46,7 @@ button.btn {
   line-height: 1.5;
   position: relative;
   display: inline-block;
-  padding: 0.5rem 2rem;
+  padding: 0.2rem 1rem;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;

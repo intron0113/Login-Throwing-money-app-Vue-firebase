@@ -1,9 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import router from '../src/router.js';
-// import firebase from 'firebase/app';
 import firebase from 'firebase';
-// import 'firebase/auth';
 import 'firebase/firestore';
 
 Vue.use(Vuex);
@@ -18,7 +16,6 @@ const firebaseConfig = {
   appId: '1:994492868234:web:b8337306cea4bbd043af73',
   measurementId: 'G-NZCLEJ2FG7',
 };
-// firebase.initializeApp(config);
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -59,7 +56,7 @@ export default new Vuex.Store({
           displayName: name,
         })
         .then(() => {
-          dispatch('checkLogin');
+          dispatch('checkSignUp');
           router.push('/');
         })
         .catch((error) => {
@@ -67,7 +64,7 @@ export default new Vuex.Store({
         });
     },
 
-    checkLogin({ commit }) {
+    checkSignUp({ commit }) {
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
           commit('getCreateLoginData', {
@@ -89,12 +86,31 @@ export default new Vuex.Store({
       });
     },
 
-    login({ dispatch }, payload) {
+    login(context, payload) {
       firebase
         .auth()
         .signInWithEmailAndPassword(payload.email, payload.password)
         .then(() => {
-          dispatch('checkLogin');
+          const user = firebase.auth().currentUser;
+          const docRef = firebase
+            .firestore()
+            .collection('useData')
+            .doc(user.uid);
+          docRef
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                context.commit('setUserData', doc);
+              } else {
+                console.log('No such document!');
+              }
+            })
+            .catch((error) => {
+              alert(error.message);
+            });
+        })
+
+        .then(() => {
           router.push('/');
         })
         .catch((error) => {
@@ -105,6 +121,12 @@ export default new Vuex.Store({
   mutations: {
     getCreateLoginData(state, user) {
       state.user = user;
+    },
+    setUserData(state, doc) {
+      state.user['uid'] = doc.data().uid;
+      state.user['name'] = doc.data().name;
+      state.user['email'] = doc.data().email;
+      state.user['myWallet'] = doc.data().myWallet;
     },
   },
 });

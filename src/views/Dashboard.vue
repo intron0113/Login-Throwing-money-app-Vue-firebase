@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="container">
     <div class="login-message-area">
       <div class="login-name">{{ user.name }}さんようこそ!!</div>
       <div>
-        <span>残高 : {{ user.myWallet }}円</span>
-        <button>ログアウト</button>
+        <span class="wallet">残高 : {{ user.myWallet }}円</span>
+        <button class="btn btn-border">ログアウト</button>
       </div>
     </div>
 
@@ -13,26 +13,32 @@
 </template>
 
 <script>
-// import firebase from 'firebase';
 import { mapGetters } from 'vuex';
 
 export default {
-  data() {
-    return {
-      userName: '',
-    };
-  },
   computed: mapGetters(['user']),
-  // リロードしてもユーザー名が消えないようにする処理
-  // created() {
-  //   firebase.auth().onAuthStateChanged((user) => {
-  //     if (user) {
-  //       this.userName = user.displayName;
-  //     }
-  //   });
-  // },
-  // mounted() {
-  //   this.userName = this.user;
-  // },
 };
 </script>
+<style>
+.container {
+  margin: 0 2rem;
+}
+.login-message-area {
+  margin: 50px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-border {
+  border: 2px solid #3366ff;
+  background: #fff;
+  color: #3366ff;
+}
+.btn-border:hover {
+  color: #fff;
+  background: #3366ff;
+}
+.wallet {
+  margin: 0 20px;
+}
+</style>
