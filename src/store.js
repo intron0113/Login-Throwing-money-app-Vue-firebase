@@ -6,6 +6,7 @@ import firebase from 'firebase';
 // import 'firebase/auth';
 import 'firebase/firestore';
 
+Vue.use(Vuex);
 Vue.config.productionTip = false;
 
 const firebaseConfig = {
@@ -22,7 +23,6 @@ const firebaseConfig = {
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
-const db = firebase.firestore();
 
 Vue.use(Vuex);
 
@@ -33,13 +33,13 @@ export default new Vuex.Store({
         uid: '',
         email: '',
         name: '',
+        myWallet: '',
       },
     };
   },
   getters: {
     user: (state) => state.user,
   },
-
   actions: {
     register({ dispatch }, payload) {
       firebase
@@ -67,30 +67,28 @@ export default new Vuex.Store({
         });
     },
 
-    checkLogin({ dispatch }) {
+    checkLogin({ commit }) {
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-          dispatch('postData', {
+          commit('getCreateLoginData', {
             uid: user.uid,
             email: user.email,
             name: user.displayName,
+            myWallet: 700,
           });
+          const db = firebase.firestore();
+          db.collection('useData')
+            .doc(user.uid)
+            .set({
+              uid: user.uid,
+              email: user.email,
+              name: user.displayName,
+              myWallet: 700,
+            });
         }
       });
     },
-    postData({ commit }, user) {
-      db.collection('useData')
-        .doc(user.uid)
-        .set({
-          uid: user.uid,
-          email: user.email,
-          // name: user.displayName,
-          myWallet: 700,
-        })
-        .then(() => {
-          commit('getData');
-        });
-    },
+
     login({ dispatch }, payload) {
       firebase
         .auth()
@@ -104,9 +102,8 @@ export default new Vuex.Store({
         });
     },
   },
-
   mutations: {
-    getData(state, user) {
+    getCreateLoginData(state, user) {
       state.user = user;
     },
   },
