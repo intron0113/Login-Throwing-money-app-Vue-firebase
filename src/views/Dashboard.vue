@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="login-message-area">
+      <div class="login-name">{{ user.name }}さんようこそ!!</div>
       <div>
-        <span>残高 : 1000</span>
+        <span>残高 : {{ user.wallet }}</span>
         <button>ログアウト</button>
       </div>
     </div>

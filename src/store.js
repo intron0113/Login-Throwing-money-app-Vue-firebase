@@ -1,10 +1,29 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import router from '../src/router.js';
+// import firebase from 'firebase/app';
+import firebase from 'firebase';
+// import 'firebase/auth';
+import 'firebase/firestore';
+
+Vue.config.productionTip = false;
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyCw7rhXscYo37ewhPUpkSzOwqQT1S2jDJU',
+  authDomain: 'vue-rogin.firebaseapp.com',
+  projectId: 'vue-rogin',
+  storageBucket: 'vue-rogin.appspot.com',
+  messagingSenderId: '994492868234',
+  appId: '1:994492868234:web:b8337306cea4bbd043af73',
+  measurementId: 'G-NZCLEJ2FG7',
+};
+// firebase.initializeApp(config);
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 Vue.use(Vuex);
-
-import firebase from 'firebase';
 
 export default new Vuex.Store({
   state() {
@@ -41,6 +60,15 @@ export default new Vuex.Store({
         .then(() => {
           dispatch('checkLogin');
           router.push('/');
+        })
+        .then(() => {
+          const db = firebase.firestore();
+          db.collection('Wallet')
+            .doc(name)
+            .set({
+              name: name,
+              myWallet: 700,
+            });
         })
         .catch((error) => {
           console.log(error);

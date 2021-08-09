@@ -74,7 +74,6 @@ a {
 }
 .register {
   margin-top: 20px;
-
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -84,13 +83,11 @@ input {
   margin: 10px 0;
   padding: 10px;
 }
-
 .btn-border {
   border: 2px solid #3366ff;
   background: #fff;
   color: #3366ff;
 }
-
 .btn-border:hover {
   color: #fff;
   background: #3366ff;
