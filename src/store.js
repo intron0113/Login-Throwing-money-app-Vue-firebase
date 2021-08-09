@@ -22,6 +22,7 @@ const firebaseConfig = {
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
+const db = firebase.firestore();
 
 Vue.use(Vuex);
 
@@ -61,17 +62,33 @@ export default new Vuex.Store({
           dispatch('checkLogin');
           router.push('/');
         })
-        .then(() => {
-          const db = firebase.firestore();
-          db.collection('Wallet')
-            .doc(name)
-            .set({
-              name: name,
-              myWallet: 700,
-            });
-        })
         .catch((error) => {
           console.log(error);
+        });
+    },
+
+    checkLogin({ dispatch }) {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          dispatch('postData', {
+            uid: user.uid,
+            email: user.email,
+            name: user.displayName,
+          });
+        }
+      });
+    },
+    postData({ commit }, user) {
+      db.collection('useData')
+        .doc(user.uid)
+        .set({
+          uid: user.uid,
+          email: user.email,
+          // name: user.displayName,
+          myWallet: 700,
+        })
+        .then(() => {
+          commit('getData');
         });
     },
     login({ dispatch }, payload) {
@@ -85,17 +102,6 @@ export default new Vuex.Store({
         .catch((error) => {
           alert(error);
         });
-    },
-    checkLogin({ commit }) {
-      firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          commit('getData', {
-            uid: user.uid,
-            email: user.email,
-            name: user.displayName,
-          });
-        }
-      });
     },
   },
 
