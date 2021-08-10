@@ -6,7 +6,7 @@ import Dashboard from './views/Dashboard.vue';
 
 Vue.use(Router);
 
-export default new Router({
+let router = new Router({
   mode: 'history',
 
   routes: [
@@ -15,3 +15,5 @@ export default new Router({
     { path: '/register', component: Register },
   ],
 });
+
+export default router;
