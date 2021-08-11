@@ -1,10 +1,13 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import router from '../src/router.js';
+import firebase from 'firebase';
+import 'firebase/firestore';
 
 Vue.use(Vuex);
+Vue.config.productionTip = false;
 
-import firebase from 'firebase';
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state() {
@@ -13,13 +16,13 @@ export default new Vuex.Store({
         uid: '',
         email: '',
         name: '',
+        myWallet: '',
       },
     };
   },
   getters: {
     user: (state) => state.user,
   },
-
   actions: {
     register({ dispatch }, payload) {
       firebase
@@ -39,41 +42,77 @@ export default new Vuex.Store({
           displayName: name,
         })
         .then(() => {
-          dispatch('checkLogin');
+          dispatch('checkSignUp');
           router.push('/');
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    login({ dispatch }, payload) {
+
+    checkSignUp({ commit }) {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          commit('getCreateLoginData', {
+            uid: user.uid,
+            email: user.email,
+            name: user.displayName,
+            myWallet: 700,
+          });
+          const db = firebase.firestore();
+          db.collection('useData')
+            .doc(user.uid)
+            .set({
+              uid: user.uid,
+              email: user.email,
+              name: user.displayName,
+              myWallet: 700,
+            });
+        }
+      });
+    },
+
+    login(context, payload) {
       firebase
         .auth()
         .signInWithEmailAndPassword(payload.email, payload.password)
         .then(() => {
-          dispatch('checkLogin');
+          const user = firebase.auth().currentUser;
+          const docRef = firebase
+            .firestore()
+            .collection('useData')
+            .doc(user.uid);
+          docRef
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                context.commit('setUserData', doc);
+              } else {
+                console.log('No such document!');
+              }
+            })
+            .catch((error) => {
+              alert(error.message);
+            });
+        })
+
+        .then(() => {
           router.push('/');
         })
         .catch((error) => {
           alert(error);
         });
     },
-    checkLogin({ commit }) {
-      firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          commit('getData', {
-            uid: user.uid,
-            email: user.email,
-            name: user.displayName,
-          });
-        }
-      });
-    },
   },
-
   mutations: {
-    getData(state, user) {
+    getCreateLoginData(state, user) {
       state.user = user;
+    },
+    setUserData(state, doc) {
+      state.user['uid'] = doc.data().uid;
+      state.user['name'] = doc.data().name;
+      state.user['email'] = doc.data().email;
+      state.user['myWallet'] = doc.data().myWallet;
     },
   },
 });
