@@ -9,23 +9,6 @@
     </div>
 
     <h1>ユーザ一覧</h1>
-    <table>
-      <tr>
-        <th>ユーザ名</th>
-      </tr>
-      <tr v-for="(user, index) in $store.getters.users" v-bind:key="index">
-        <td>{{ index }}</td>
-        <td>{{ user }}</td>
-        <!-- <td><input class="button2" type="button" value="walletを見る" v-on:click="openModal" v-model="comment"></td>
-          <td><input class="button2" type="button" value="送る"></td> -->
-        <td>
-          <button class="button2">
-            walletを見る
-          </button>
-        </td>
-        <td><button class="button2">送る</button></td>
-      </tr>
-    </table>
   </div>
 </template>
 
@@ -33,8 +16,9 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  computed: mapGetters(['user']),
-
+  computed: {
+    ...mapGetters(['user']),
+  },
   methods: {
     signOut() {
       this.$store.dispatch('signOut');

@@ -103,6 +103,15 @@ export default new Vuex.Store({
           alert(error);
         });
     },
+    // ログアウト
+    signOut() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          router.push('/login');
+        });
+    },
   },
   mutations: {
     getCreateLoginData(state, user) {
