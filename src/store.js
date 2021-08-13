@@ -18,10 +18,17 @@ export default new Vuex.Store({
         name: '',
         myWallet: '',
       },
+      users: [],
     };
   },
   getters: {
     user: (state) => state.user,
+    users: (state) => {
+      return state.users;
+    },
+    // modalSet: (state, usersIndex) => {
+    //   state.users.splice(usersIndex, 1);
+    // },
   },
   actions: {
     register({ dispatch }, payload) {
@@ -97,10 +104,40 @@ export default new Vuex.Store({
         })
 
         .then(() => {
+          const users = [];
+          const user = firebase.auth().currentUser;
+          const db = firebase.firestore();
+          db.collection('useData')
+            .where(firebase.firestore.FieldPath.documentId(), '!=', user.uid)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                users.push(doc.data());
+                context.commit('setUsersData', users);
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+
+        .then(() => {
           router.push('/');
         })
         .catch((error) => {
-          alert(error);
+          console.log(error);
+        });
+    },
+    // ログアウト
+    signOut() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          router.push('/login');
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
   },
@@ -113,6 +150,12 @@ export default new Vuex.Store({
       state.user['name'] = doc.data().name;
       state.user['email'] = doc.data().email;
       state.user['myWallet'] = doc.data().myWallet;
+    },
+
+    // ログイン時登録ユーザ名をセット
+    setUsersData(state, users) {
+      state.users = users;
+      console.log(state.users);
     },
   },
 });

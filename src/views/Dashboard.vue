@@ -13,19 +13,39 @@
       <tr>
         <th>ユーザ名</th>
       </tr>
-      <tr v-for="(user, index) in $store.getters.users" v-bind:key="index">
-        <td>{{ index }}</td>
-        <td>{{ user }}</td>
-        <!-- <td><input class="button2" type="button" value="walletを見る" v-on:click="openModal" v-model="comment"></td>
-          <td><input class="button2" type="button" value="送る"></td> -->
+
+      <tr v-for="(otheruser, index) in users" v-bind:key="index">
+        <td>{{ otheruser.name }}</td>
         <td>
-          <button class="button2">
+          <button class="button2" v-on:click="openModal(index)">
             walletを見る
           </button>
         </td>
         <td><button class="button2">送る</button></td>
       </tr>
     </table>
+
+    <div
+      v-show="showContent"
+      v-on:click="closeModal"
+      @open="showContent = true"
+      @close="showContent = false"
+    >
+      <div id="overlay" v-show="showContent">
+        <div id="main-content">
+          <p>{{ $store.getters.modalDatas }}さんの残高</p>
+          <!-- <p>{{ $store.getters.modalDatas.id }}</p> -->
+          <div id="button-content">
+            <p>
+              <button v-on:click="closeModal" class="modal-button">
+                close
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- :index='usersIndex' -->
   </div>
 </template>
 
@@ -33,11 +53,32 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  computed: mapGetters(['user']),
-
+  computed: {
+    ...mapGetters(['user', 'users']),
+  },
+  data() {
+    return {
+      showContent: false,
+      usersIndex: '',
+    };
+  },
   methods: {
     signOut() {
       this.$store.dispatch('signOut');
+    },
+    openModal(index) {
+      this.showContent = true;
+      // モーダルセットようのデータ作成
+      this.usersIndex = index;
+      // this.usersIndex.forEach((userIndex, index) => { // 修正箇所： idの振り直し
+      //   userIndex.id = index;
+      // })
+      const usersIndex = this.usersIndex;
+      // storeに渡す
+      this.$store.getters('modalSet', usersIndex);
+    },
+    closeModal() {
+      this.showContent = false;
     },
   },
 };
