@@ -171,7 +171,6 @@ export default new Vuex.Store({
     // ログイン時登録ユーザ名をセット
     setUsersData(state, users) {
       state.users = users;
-      // console.log(state.users);
     },
   },
 });

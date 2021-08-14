@@ -26,22 +26,24 @@
     </table>
 
     <div id="overlay" v-show="showContent">
-      <div
-        v-show="showContent"
-        @open="showContent = true"
-        @close="showContent = false"
-        id="wallet-content"
-      >
-        <div id="wallet-contentname">
-          <p>{{ selectUser.name }}さんの残高</p>
-          <p>{{ selectUser.myWallet }}</p>
-        </div>
-        <div id="button-content">
-          <div v-on:click="closeModal" class="modal-button">
-            close
+      <transition>
+        <div
+          v-show="showContent"
+          @open="showContent = true"
+          @close="showContent = false"
+          id="wallet-content"
+        >
+          <div id="wallet-contentname">
+            <p>{{ selectUser.name }}さんの残高</p>
+            <p>{{ selectUser.myWallet }}</p>
+          </div>
+          <div id="button-content">
+            <div v-on:click="closeModal" class="modal-button">
+              close
+            </div>
           </div>
         </div>
-      </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -74,6 +76,18 @@ export default {
 };
 </script>
 <style>
+.v-leave-active,
+.v-enter-active {
+  transition: opacity 1s;
+  transform: translate(0px, 0px);
+  transition: transform 600ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+}
+.v-enter,
+.v-leave-to {
+  opacity: 0;
+  transform: translateY(-10vh) translateY(0px);
+}
+
 #overlay {
   /*要素を重ねた時の順番*/
   z-index: 1;
