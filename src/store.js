@@ -109,7 +109,7 @@ export default new Vuex.Store({
             .get()
             .then((doc) => {
               if (doc.exists) {
-                context.commit('setUserData', doc);
+                context.commit('setuseData', doc);
               } else {
                 console.log('No such document!');
               }
@@ -144,6 +144,55 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+
+    // 投げ銭機能
+    tipping(context, payload) {
+      const user = firebase.auth().currentUser;
+      const db = firebase.firestore();
+      const docRef = db.collection('useData').doc(user.uid);
+      docRef
+        .update({
+          myWallet: firebase.firestore.FieldValue.increment(
+            -payload.tippingWallet
+          ),
+        })
+        // storeのmyWallet（ログインユーザー）の更新
+        .then(() => {
+          docRef
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                context.commit('setTipping', doc);
+              } else {
+                console.log('No such document!');
+              }
+            })
+            .catch((error) => {
+              alert(error.message);
+            });
+        });
+      // firestoreのmyWallet（選択ユーザー）の更新
+      db.collection('useData')
+        .doc(payload.clickedUserUid)
+        .update({
+          myWallet: firebase.firestore.FieldValue.increment(
+            payload.tippingWallet
+          ),
+        })
+        // storeのusers（選択ユーザー）の更新
+        .then(() => {
+          const users = [];
+          db.collection('useData')
+            .where(firebase.firestore.FieldPath.documentId(), '!=', user.uid)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                users.push(doc.data());
+                context.commit('setUsersData', users);
+              });
+            });
+        });
+    },
     // ログアウト
     signOut() {
       firebase
@@ -161,7 +210,7 @@ export default new Vuex.Store({
     getCreateLoginData(state, user) {
       state.user = user;
     },
-    setUserData(state, doc) {
+    setuseData(state, doc) {
       state.user['uid'] = doc.data().uid;
       state.user['name'] = doc.data().name;
       state.user['email'] = doc.data().email;
@@ -171,6 +220,9 @@ export default new Vuex.Store({
     // ログイン時登録ユーザ名をセット
     setUsersData(state, users) {
       state.users = users;
+    },
+    setTipping(state, doc) {
+      state.user.myWallet = doc.data().myWallet;
     },
   },
 });
