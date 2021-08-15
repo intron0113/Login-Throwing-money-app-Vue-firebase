@@ -26,9 +26,6 @@ export default new Vuex.Store({
     users: (state) => {
       return state.users;
     },
-    // modalSet: (state, usersIndex) => {
-    //   state.users.splice(usersIndex, 1);
-    // },
   },
   actions: {
     register({ dispatch }, payload) {
@@ -74,6 +71,25 @@ export default new Vuex.Store({
               email: user.email,
               name: user.displayName,
               myWallet: 700,
+            });
+          const users = [];
+          const mainuser = firebase.auth().currentUser;
+
+          db.collection('useData')
+            .where(
+              firebase.firestore.FieldPath.documentId(),
+              '!=',
+              mainuser.uid
+            )
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                users.push(doc.data());
+                commit('setUsersData', users);
+              });
+            })
+            .catch((error) => {
+              console.log(error);
             });
         }
       });
@@ -155,7 +171,6 @@ export default new Vuex.Store({
     // ログイン時登録ユーザ名をセット
     setUsersData(state, users) {
       state.users = users;
-      console.log(state.users);
     },
   },
 });

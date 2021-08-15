@@ -23,7 +23,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  padding-top: 60px;
 }
 
 /* *,
@@ -44,7 +44,7 @@ button.btn {
   font-size: 0.8rem;
   font-weight: 300;
   line-height: 1.5;
-  position: relative;
+  */position: relative;
   display: inline-block;
   padding: 0.2rem 1rem;
   cursor: pointer;
