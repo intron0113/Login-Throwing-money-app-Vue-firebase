@@ -89,7 +89,6 @@ export default {
     },
     openModal(users, index) {
       this.showContent = true;
-      console.log(users[index]);
       return (this.selectUser = users[index]);
     },
     closeModal() {

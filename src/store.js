@@ -150,12 +150,20 @@ export default new Vuex.Store({
       const user = firebase.auth().currentUser;
       const db = firebase.firestore();
       const docRef = db.collection('useData').doc(user.uid);
-      docRef
+      docRef.update({
+        myWallet: firebase.firestore.FieldValue.increment(
+          -payload.tippingWallet
+        ),
+      });
+      // firestoreのmyWallet（選択ユーザー）の更新
+      db.collection('useData')
+        .doc(payload.clickedUserUid)
         .update({
           myWallet: firebase.firestore.FieldValue.increment(
-            -payload.tippingWallet
+            payload.tippingWallet
           ),
         })
+
         // storeのmyWallet（ログインユーザー）の更新
         .then(() => {
           docRef
@@ -170,14 +178,6 @@ export default new Vuex.Store({
             .catch((error) => {
               alert(error.message);
             });
-        });
-      // firestoreのmyWallet（選択ユーザー）の更新
-      db.collection('useData')
-        .doc(payload.clickedUserUid)
-        .update({
-          myWallet: firebase.firestore.FieldValue.increment(
-            payload.tippingWallet
-          ),
         })
         // storeのusers（選択ユーザー）の更新
         .then(() => {

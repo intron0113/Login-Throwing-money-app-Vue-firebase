@@ -49,7 +49,6 @@ export default {
     modalData() {
       return this.$store.getters.modalData;
     },
-
     required() {
       return this.tippingWallet == '';
     },
@@ -59,7 +58,6 @@ export default {
     limit() {
       return this.tippingWallet > this.$store.getters.user.myWallet;
     },
-
     activateSubmit() {
       if (this.tippingWallet == '') {
         return true;
@@ -90,7 +88,6 @@ export default {
   margin: 0%;
   padding: 2em 0;
 }
-
 .modal-button {
   background-color: #ff0000;
   color: #fff;
