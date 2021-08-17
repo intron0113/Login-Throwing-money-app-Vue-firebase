@@ -146,14 +146,18 @@ export default new Vuex.Store({
     },
 
     // 投げ銭機能
-    tipping(context, payload) {
+    async tipping(context, payload) {
       const user = firebase.auth().currentUser;
       const db = firebase.firestore();
       const docRef = db.collection('useData').doc(user.uid);
-      docRef.update({
-        myWallet: firebase.firestore.FieldValue.increment(
-          -payload.tippingWallet
-        ),
+
+      await db.runTransaction(async (transaction) => {
+        await transaction.get(docRef);
+        await transaction.update({
+          myWallet: firebase.firestore.FieldValue.increment(
+            -payload.tippingWallet
+          ),
+        });
       });
       // firestoreのmyWallet（選択ユーザー）の更新
       db.collection('useData')
@@ -193,6 +197,7 @@ export default new Vuex.Store({
             });
         });
     },
+
     // ログアウト
     signOut() {
       firebase
