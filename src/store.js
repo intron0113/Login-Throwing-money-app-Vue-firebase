@@ -153,7 +153,7 @@ export default new Vuex.Store({
 
       await db.runTransaction(async (transaction) => {
         await transaction.get(docRef);
-        await transaction.update({
+        await transaction.update(docRef, {
           myWallet: firebase.firestore.FieldValue.increment(
             -payload.tippingWallet
           ),
