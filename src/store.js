@@ -115,7 +115,7 @@ export default new Vuex.Store({
               }
             })
             .catch((error) => {
-              alert(error.message);
+              console.log(error.message);
             });
         })
 
@@ -149,25 +149,25 @@ export default new Vuex.Store({
     async tipping(context, payload) {
       const user = firebase.auth().currentUser;
       const db = firebase.firestore();
-      const docRef = db.collection('useData').doc(user.uid);
+      const docRef = await db.collection('useData').doc(user.uid);
+      const docOther = db.collection('useData').doc(payload.clickedUserUid);
 
-      await db.runTransaction(async (transaction) => {
-        await transaction.get(docRef);
-        await transaction.update(docRef, {
-          myWallet: firebase.firestore.FieldValue.increment(
-            -payload.tippingWallet
-          ),
-        });
-      });
-      // firestoreのmyWallet（選択ユーザー）の更新
-      db.collection('useData')
-        .doc(payload.clickedUserUid)
-        .update({
-          myWallet: firebase.firestore.FieldValue.increment(
-            payload.tippingWallet
-          ),
+      await db
+        .runTransaction(async (t) => {
+          await t.update(docRef, {
+            myWallet: firebase.firestore.FieldValue.increment(
+              -payload.tippingWallet
+            ),
+          });
+
+          // firestoreのmyWallet（選択ユーザー）の更新
+
+          await t.update(docOther, {
+            myWallet: firebase.firestore.FieldValue.increment(
+              payload.tippingWallet
+            ),
+          });
         })
-
         // storeのmyWallet（ログインユーザー）の更新
         .then(() => {
           docRef
@@ -180,9 +180,10 @@ export default new Vuex.Store({
               }
             })
             .catch((error) => {
-              alert(error.message);
+              console.log(error.message);
             });
         })
+
         // storeのusers（選択ユーザー）の更新
         .then(() => {
           const users = [];
@@ -194,6 +195,9 @@ export default new Vuex.Store({
                 users.push(doc.data());
                 context.commit('setUsersData', users);
               });
+            })
+            .catch((error) => {
+              console.log(error.message);
             });
         });
     },
