@@ -152,22 +152,21 @@ export default new Vuex.Store({
       const docRef = await db.collection('useData').doc(user.uid);
       const docOther = db.collection('useData').doc(payload.clickedUserUid);
 
-      await db
-        .runTransaction(async (t) => {
-          await t.update(docRef, {
-            myWallet: firebase.firestore.FieldValue.increment(
-              -payload.tippingWallet
-            ),
-          });
+      db.runTransaction((t) => {
+        t.update(docRef, {
+          myWallet: firebase.firestore.FieldValue.increment(
+            -payload.tippingWallet
+          ),
+        });
 
-          // firestoreのmyWallet（選択ユーザー）の更新
+        // firestoreのmyWallet（選択ユーザー）の更新
 
-          await t.update(docOther, {
-            myWallet: firebase.firestore.FieldValue.increment(
-              payload.tippingWallet
-            ),
-          });
-        })
+        t.update(docOther, {
+          myWallet: firebase.firestore.FieldValue.increment(
+            payload.tippingWallet
+          ),
+        });
+      })
         // storeのmyWallet（ログインユーザー）の更新
         .then(() => {
           docRef
