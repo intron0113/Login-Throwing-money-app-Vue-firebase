@@ -14,14 +14,18 @@
         <th>ユーザ名</th>
       </tr>
 
-      <tr v-for="(otheruser, index) in users" v-bind:key="index">
-        <td>{{ otheruser.name }}</td>
+      <tr v-for="(user, index) in users" v-bind:key="index">
+        <td>{{ user.name }}</td>
         <td class="table-wallet">
           <button class="btn button2" v-on:click="openModal(users, index)">
             walletを見る
           </button>
         </td>
-        <td><button class="btn button2">送る</button></td>
+        <td>
+          <button class="btn button2" @click="openSendModal(user.uid)">
+            送る
+          </button>
+        </td>
       </tr>
     </table>
 
@@ -45,20 +49,38 @@
         </div>
       </transition>
     </div>
+    <div id="overlay2" v-show="showContent2">
+      <transition>
+        <SendModal
+          v-show="showContent2"
+          @openSendModal="openSendModal"
+          @closeSendModal="closeSendModal"
+          @onlyCloseSendModal="onlyCloseSendModal"
+        ></SendModal>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import SendModal from '@/components/SendModal.vue';
 
 export default {
+  components: {
+    SendModal,
+  },
+
   computed: {
     ...mapGetters(['user', 'users']),
   },
   data() {
     return {
       showContent: false,
+      showContent2: false,
       selectUser: '',
+      tippingWallet: '',
+      clickedUserUid: '',
     };
   },
   methods: {
@@ -71,6 +93,23 @@ export default {
     },
     closeModal() {
       this.showContent = false;
+    },
+
+    // 「送る」ボタン
+    openSendModal(clickedUserUid) {
+      this.showContent2 = true;
+      this.clickedUserUid = clickedUserUid;
+    },
+    closeSendModal(tippingWallet) {
+      this.showContent2 = false;
+      this.tippingWallet = tippingWallet;
+      this.$store.dispatch('tipping', {
+        tippingWallet: this.tippingWallet,
+        clickedUserUid: this.clickedUserUid,
+      });
+    },
+    onlyCloseSendModal() {
+      this.showContent2 = false;
     },
   },
 };
@@ -89,18 +128,25 @@ export default {
 }
 
 #overlay {
-  /*要素を重ねた時の順番*/
   z-index: 1;
-
-  /*画面全体を覆う設定*/
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-
-  /*画面の中央に要素を表示させる設定*/
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+#overlay2 {
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: flex-end;
   justify-content: center;
